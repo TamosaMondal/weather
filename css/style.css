@@ -1,0 +1,1562 @@
+/* ---------- SPA content transition ---------- */
+main#spa-main {
+    animation: spa-fade-in 0.18s ease;
+    position: relative;
+}
+
+@keyframes spa-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Base ---------- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: transparent;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+/* ---------- Animated sky background ---------- */
+/* Fixed behind everything so it doesn't move on scroll. Pure CSS —
+   no external images to fetch, so nothing to break or slow-load. */
+.sky-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(180deg, #4f95d1 0%, #7fb8e6 45%, #cfe6f7 100%);
+}
+
+.sun-glow {
+    position: absolute;
+    top: -120px;
+    right: -80px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 250, 220, 0.9) 0%, rgba(255, 250, 220, 0) 70%);
+}
+
+.cloud {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0.9;
+    filter: blur(1px);
+    box-shadow:
+        60px 10px 0 -10px #fff,
+        -55px 15px 0 -12px #fff,
+        30px -25px 0 -15px #fff,
+        -30px -20px 0 -18px #fff;
+    animation: drift linear infinite;
+}
+
+.cloud-a { top: 8%;  left: -30%; width: 160px; height: 60px;  animation-duration: 70s; }
+.cloud-b { top: 22%; left: -40%; width: 110px; height: 44px;  animation-duration: 95s; animation-delay: -20s; opacity: 0.75; }
+.cloud-c { top: 42%; left: -35%; width: 190px; height: 70px;  animation-duration: 120s; animation-delay: -60s; opacity: 0.65; }
+.cloud-d { top: 63%; left: -25%; width: 130px; height: 50px;  animation-duration: 85s; animation-delay: -35s; opacity: 0.55; }
+
+@keyframes drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(160vw); }
+}
+
+.stars {
+    display: none;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    padding: 18px 0;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.logo {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hello {
+    font-size: 0.95rem;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-block;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- Flash / error messages ---------- */
+.flash-message {
+    background: #dcfce7;
+    color: #166534;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.error-message {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+/* ---------- Auth pages ---------- */
+.auth-box {
+    max-width: 380px;
+    margin: 60px auto;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form label {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.auth-form input {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.auth-form .btn {
+    margin-top: 20px;
+}
+
+.auth-switch {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* ---------- Dashboard: search ---------- */
+.search-section {
+    margin: 30px 0;
+}
+
+.search-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 260px;
+}
+
+.search-form input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.search-input-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+}
+
+.suggestions-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background: #eff6ff;
+}
+
+.suggestion-name {
+    font-size: 0.95rem;
+    color: #1f2937;
+}
+
+.suggestion-sub {
+    font-size: 0.78rem;
+    color: #6b7280;
+}
+
+/* Famous places side panel: appears next to the form while typing,
+   disappears again once the city is saved (or the field is cleared). */
+.places-panel {
+    flex: 1;
+    min-width: 280px;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+}
+
+.places-panel h3 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+}
+
+.places-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+.place-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+}
+
+.place-card img,
+.place-thumb-placeholder {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f0f4f8;
+}
+
+.place-thumb-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.place-name {
+    font-size: 0.78rem;
+    color: #374151;
+    line-height: 1.2;
+}
+
+.places-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #6b7280;
+    grid-column: 1 / -1;
+}
+
+.places-empty {
+    grid-column: 1 / -1;
+    font-size: 0.88rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* ---------- Dashboard: city grid ---------- */
+.cities-section {
+    margin-bottom: 60px;
+}
+
+.empty-state {
+    color: #6b7280;
+}
+
+.weather-alerts-banner {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 0.92rem;
+}
+
+.weather-alerts-banner.hidden {
+    display: none;
+}
+
+.city-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.city-grid.content-loading {
+    display: none;
+}
+
+.city-card {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+}
+
+.city-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.weather-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    font-size: 2.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.aqi-badge {
+    display: inline-block;
+    margin: 4px 0 8px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.aqi-good {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.aqi-moderate {
+    background: #fef9c3;
+    color: #92680a;
+}
+
+.aqi-unhealthy-for-sensitive-groups {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.aqi-unhealthy {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.aqi-very-unhealthy {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+.aqi-hazardous {
+    background: #4c0519;
+    color: #fecdd3;
+}
+
+.alias-display {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.city-sub {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.temp {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 0 0;
+}
+
+.desc {
+    margin: 0 0 4px;
+    color: #374151;
+}
+
+.updated {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin: 0 0 12px;
+}
+
+.alias-form {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.alias-form input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.city-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Inline delete confirm — hide/show handled by JS */
+.delete-form {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.inline-form {
+    display: inline;
+}
+
+/* ---------- Display menu: Layout (Grid / List) ---------- */
+.city-grid.layout-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.city-grid.layout-list .city-card {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+}
+
+.city-grid.layout-list .city-card-header {
+    flex: 1 1 220px;
+}
+
+.city-grid.layout-list .temp,
+.city-grid.layout-list .desc,
+.city-grid.layout-list .aqi-badge,
+.city-grid.layout-list .updated {
+    margin: 0;
+}
+
+.city-grid.layout-list .alias-form {
+    flex-basis: 100%;
+    margin: 0;
+}
+
+.city-grid.layout-list .city-actions {
+    margin-left: auto;
+}
+
+/* ---------- Display menu: Card Size (Compact / Comfortable / Large) ---------- */
+.city-grid.card-size-compact .city-card {
+    padding: 10px 14px;
+}
+
+.city-grid.card-size-compact .weather-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.8rem;
+}
+
+.city-grid.card-size-compact .temp {
+    font-size: 1.4rem;
+}
+
+.city-grid.card-size-large .city-card {
+    padding: 26px;
+}
+
+.city-grid.card-size-large .weather-icon {
+    width: 72px;
+    height: 72px;
+    font-size: 3.2rem;
+}
+
+.city-grid.card-size-large .temp {
+    font-size: 2.6rem;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+    margin-top: 60px;
+    color: #e5e7eb;
+}
+
+.footer-top {
+    background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+    padding: 40px 0 30px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 30px;
+}
+
+.footer-col h2 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+}
+
+.footer-col h4 {
+    margin: 0 0 12px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #bfdbfe;
+}
+
+.footer-col p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #dbeafe;
+    max-width: 320px;
+    line-height: 1.5;
+}
+
+.footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-col ul a {
+    color: #e5e7eb;
+    font-size: 0.9rem;
+}
+
+.footer-col ul a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    background: #0f172a;
+    padding: 14px 0;
+}
+
+.footer-bottom-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.footer-bottom-inner p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+/* ---------- Navbar extras ---------- */
+.current-date {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-right: 4px;
+}
+
+.theme-toggle,
+.unit-toggle {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+/* ---------- Loading indicator ---------- */
+.loading-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(37, 99, 235, 0.25);
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---------- Pin ---------- */
+.pinned-card {
+    position: relative;
+    border: 2px solid #f59e0b;
+}
+
+.pinned-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.3rem;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+
+/* ---------- Profile page ---------- */
+.profile-section {
+    max-width: 480px;
+    margin: 40px auto;
+}
+
+.profile-card {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+    margin-bottom: 24px;
+}
+
+.profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f4f8;
+}
+
+.profile-row:last-child {
+    border-bottom: none;
+}
+
+.profile-label {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.profile-value {
+    font-weight: 600;
+}
+
+/* ---------- Help & Support page ---------- */
+.help-section {
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.help-card {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+    margin-bottom: 32px;
+}
+
+.contact-list {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.contact-list li {
+    margin-bottom: 8px;
+}
+
+/* ---- FAQ two-column layout ---- */
+.faq-layout {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+/* Left sticky nav */
+.faq-nav {
+    flex: 0 0 220px;
+    position: sticky;
+    top: 20px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+}
+
+.faq-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.faq-nav-link {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    color: #374151;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.35;
+}
+
+.faq-nav-link:hover {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.faq-nav-link.faq-nav-active {
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+/* Right accordion list — level 1: sections */
+.faq-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.faq-section {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    scroll-margin-top: 20px;
+}
+
+.faq-section-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    background: transparent;
+    border: none;
+    font: inherit;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1f2937;
+    cursor: pointer;
+    text-align: left;
+}
+
+.faq-section-header:hover {
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.faq-section.faq-section-open .faq-section-header .faq-caret {
+    transform: rotate(-135deg);
+    margin-bottom: -4px;
+}
+
+/* Level 1 body — collapsed until the section is opened */
+.faq-section-body {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 12px 14px;
+}
+
+.faq-section.faq-section-open .faq-section-body {
+    display: flex;
+}
+
+/* Level 2 — questions inside an open section */
+.faq-item {
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    scroll-margin-top: 20px;
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1f2937;
+    cursor: pointer;
+    text-align: left;
+}
+
+.faq-question:hover {
+    background: rgba(37, 99, 235, 0.06);
+}
+
+.faq-caret {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-right: 2px solid #6b7280;
+    border-bottom: 2px solid #6b7280;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.faq-item.faq-open .faq-caret {
+    transform: rotate(-135deg);
+    margin-bottom: -4px;
+}
+
+.faq-answer {
+    display: none;
+    padding: 0 16px 14px;
+    color: #4b5563;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.faq-answer p {
+    margin: 0;
+}
+
+.faq-item.faq-open .faq-answer {
+    display: block;
+}
+
+@media (max-width: 640px) {
+    .faq-layout {
+        flex-direction: column;
+    }
+    .faq-nav {
+        position: static;
+        flex: none;
+        width: 100%;
+    }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+/* Respect reduced-motion preferences by freezing the drifting clouds */
+@media (prefers-reduced-motion: reduce) {
+    .cloud {
+        animation: none;
+    }
+}
+
+/* =========================================================
+   Menu component (includes/menu.php + js/menu.js)
+   Generic parent/child menu — used here as the header nav,
+   reusable anywhere as a dropdown, sidebar, or context menu.
+   ========================================================= */
+.menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.menu-item {
+    position: relative;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.menu-link:hover,
+.menu-link:focus-visible {
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+}
+
+.menu-item.is-active > .menu-link {
+    background: rgba(255, 255, 255, 0.22);
+    font-weight: 600;
+}
+
+.menu-caret {
+    margin-left: 2px;
+    transition: transform 0.15s ease;
+    display: inline-block;
+}
+
+.menu-item.open > .menu-toggle .menu-caret {
+    transform: rotate(90deg);
+}
+
+.menu-submenu {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    background: #ffffff;
+    color: #1f2937;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 50;
+}
+
+.menu-item.open > .menu-submenu {
+    display: flex;
+}
+
+.menu-submenu .menu-submenu {
+    top: 0;
+    left: 100%;
+}
+
+.menu-submenu .menu-link:hover,
+.menu-submenu .menu-link:focus-visible {
+    background: #f3f4f6;
+}
+
+.menu--sidebar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+}
+
+.menu--sidebar .menu-submenu {
+    position: static;
+    box-shadow: none;
+    background: transparent;
+    color: inherit;
+    padding-left: 16px;
+    display: none;
+}
+
+.menu--sidebar .menu-item.open > .menu-submenu {
+    display: flex;
+}
+
+/* =========================================================
+   Skeleton loaders + spinner
+   ========================================================= */
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background: #e5e7eb;
+    border-radius: 6px;
+}
+
+.skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    animation: skeleton-shimmer 1.4s infinite;
+}
+
+@keyframes skeleton-shimmer {
+    100% { transform: translateX(100%); }
+}
+
+.skeleton-text {
+    height: 0.9em;
+    margin: 6px 0;
+}
+
+.skeleton-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.skeleton-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-line-short { width: 40%; }
+.skeleton-line-medium { width: 65%; }
+.skeleton-line-long { width: 90%; }
+
+.btn.is-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.btn.is-loading .spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border-color: rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+}
+
+.btn-outline.is-loading .spinner,
+.btn-small.is-loading .spinner {
+    border-color: rgba(37, 99, 235, 0.3);
+    border-top-color: #2563eb;
+}
+
+/* =========================================================
+   Dark ("black") theme
+   One of three theme options (Light / Dark / Pink) selectable
+   from the "Settings > Theme" menu in the navbar.
+   ========================================================= */
+html.dark-theme body {
+    background: #000;
+    color: #e5e7eb;
+}
+
+html.dark-theme .sky-bg {
+    background: #000;
+}
+
+html.dark-theme .sun-glow,
+html.dark-theme .cloud {
+    display: none;
+}
+
+html.dark-theme .stars {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1.5px 1.5px at 20% 20%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 70% 15%, #fff, transparent),
+        radial-gradient(1px 1px at 40% 35%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 85% 45%, #fff, transparent),
+        radial-gradient(1px 1px at 10% 55%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 60% 65%, #fff, transparent),
+        radial-gradient(1px 1px at 30% 80%, #fff, transparent),
+        radial-gradient(1.5px 1.5px at 92% 75%, #fff, transparent);
+    opacity: 0.6;
+}
+
+html.dark-theme .site-header {
+    background: #0a0a0a;
+    border-bottom: 1px solid #1f1f1f;
+}
+
+html.dark-theme .site-footer .footer-top {
+    background: #0a0a0a;
+}
+
+html.dark-theme .footer-bottom {
+    background: #000;
+    border-top: 1px solid #1f1f1f;
+}
+
+html.dark-theme .city-card,
+html.dark-theme .auth-box,
+html.dark-theme .profile-card,
+html.dark-theme .help-card,
+html.dark-theme .faq-nav,
+html.dark-theme .faq-section,
+html.dark-theme .places-panel,
+html.dark-theme .suggestions-dropdown,
+html.dark-theme .skeleton-card {
+    background: #0d0d0d;
+    color: #e5e7eb;
+    border: 1px solid #222;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+html.dark-theme .place-name {
+    color: #d1d5db;
+}
+
+html.dark-theme .place-card img,
+html.dark-theme .place-thumb-placeholder {
+    background: #1a1a1a;
+}
+
+html.dark-theme .city-sub,
+html.dark-theme .desc,
+html.dark-theme .profile-label,
+html.dark-theme .updated {
+    color: #9ca3af;
+}
+
+html.dark-theme .auth-form input,
+html.dark-theme .search-form input,
+html.dark-theme .alias-form input {
+    background: #111;
+    border-color: #2a2a2a;
+    color: #e5e7eb;
+}
+
+html.dark-theme .profile-row {
+    border-bottom-color: #222;
+}
+
+html.dark-theme .faq-section-header {
+    color: #e5e7eb;
+}
+
+html.dark-theme .faq-section-header:hover {
+    background: rgba(96, 165, 250, 0.08);
+}
+
+html.dark-theme .faq-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: #222;
+}
+
+html.dark-theme .faq-question {
+    color: #e5e7eb;
+}
+
+html.dark-theme .faq-question:hover {
+    background: rgba(96, 165, 250, 0.08);
+}
+
+html.dark-theme .faq-caret {
+    border-color: #6b7280;
+}
+
+html.dark-theme .faq-answer {
+    color: #9ca3af;
+}
+
+html.dark-theme .faq-nav-link {
+    color: #d1d5db;
+}
+
+html.dark-theme .faq-nav-link:hover {
+    background: rgba(96, 165, 250, 0.1);
+    color: #60a5fa;
+}
+
+html.dark-theme .faq-nav-link.faq-nav-active {
+    background: rgba(96, 165, 250, 0.15);
+    color: #93c5fd;
+}
+
+html.dark-theme a {
+    color: #60a5fa;
+}
+
+html.dark-theme .suggestion-item:hover {
+    background: rgba(96, 165, 250, 0.12);
+}
+
+html.dark-theme .suggestion-name {
+    color: #e5e7eb;
+}
+
+html.dark-theme .menu-submenu {
+    background: #0d0d0d;
+    color: #e5e7eb;
+    border: 1px solid #222;
+}
+
+html.dark-theme .menu-submenu .menu-link:hover,
+html.dark-theme .menu-submenu .menu-link:focus-visible {
+    background: #1a1a1a;
+}
+
+html.dark-theme .skeleton {
+    background: #1a1a1a;
+}
+
+html.dark-theme .skeleton::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+
+/* =========================================================
+   Pink theme
+   Toggled via the same button that used to control dark mode
+   (now labelled/coloured for pink mode instead). Light, soft
+   pink surfaces in place of the default blue/white look.
+   ========================================================= */
+html.pink-theme body {
+    background: #fff0f5;
+    color: #6b2f45;
+}
+
+html.pink-theme .sky-bg {
+    background: linear-gradient(180deg, #ffe4ef 0%, #ffd6e8 60%, #ffc4dd 100%);
+}
+
+html.pink-theme .sun-glow {
+    background: radial-gradient(circle, rgba(255, 105, 180, 0.35) 0%, rgba(255, 105, 180, 0) 70%);
+}
+
+html.pink-theme .cloud {
+    background: #ffffff;
+    box-shadow:
+        60px 10px 0 -10px #ffffff,
+        -55px 15px 0 -12px #ffffff,
+        30px -25px 0 -15px #ffffff,
+        -30px -20px 0 -18px #ffffff;
+    opacity: 0.85;
+}
+
+html.pink-theme .site-header {
+    background: linear-gradient(135deg, #f472b6, #fb7185);
+}
+
+html.pink-theme .footer-top,
+html.pink-theme .footer-bottom {
+    background: linear-gradient(135deg, #fbcfe8, #fecdd3);
+    color: #6b2f45;
+}
+
+html.pink-theme .city-card,
+html.pink-theme .auth-box,
+html.pink-theme .profile-card,
+html.pink-theme .help-card,
+html.pink-theme .faq-nav,
+html.pink-theme .faq-section,
+html.pink-theme .places-panel,
+html.pink-theme .suggestions-dropdown,
+html.pink-theme .skeleton-card {
+    background: #fff5f8;
+    color: #6b2f45;
+    border: 1px solid #fbcfe8;
+    box-shadow: 0 4px 16px rgba(244, 114, 182, 0.18);
+}
+
+html.pink-theme .place-name {
+    color: #9d3a63;
+}
+
+html.pink-theme .place-card img,
+html.pink-theme .place-thumb-placeholder {
+    background: #ffe4ef;
+}
+
+html.pink-theme .city-sub,
+html.pink-theme .desc,
+html.pink-theme .profile-label,
+html.pink-theme .updated {
+    color: #b45577;
+}
+
+html.pink-theme .auth-form input,
+html.pink-theme .search-form input,
+html.pink-theme .alias-form input {
+    background: #fff;
+    border-color: #fbcfe8;
+    color: #6b2f45;
+}
+
+html.pink-theme .profile-row {
+    border-bottom-color: #fbcfe8;
+}
+
+html.pink-theme .faq-section-header {
+    color: #6b2f45;
+}
+
+html.pink-theme .faq-section-header:hover {
+    background: rgba(236, 72, 153, 0.06);
+}
+
+html.pink-theme .faq-item {
+    background: rgba(255, 255, 255, 0.5);
+    border-color: #fbcfe8;
+}
+
+html.pink-theme .faq-question {
+    color: #6b2f45;
+}
+
+html.pink-theme .faq-question:hover {
+    background: rgba(236, 72, 153, 0.06);
+}
+
+html.pink-theme .faq-caret {
+    border-color: #b45577;
+}
+
+html.pink-theme .faq-answer {
+    color: #9d3a63;
+}
+
+html.pink-theme .faq-nav-link {
+    color: #6b2f45;
+}
+
+html.pink-theme .faq-nav-link:hover {
+    background: rgba(236, 72, 153, 0.1);
+    color: #db2777;
+}
+
+html.pink-theme .faq-nav-link.faq-nav-active {
+    background: rgba(236, 72, 153, 0.15);
+    color: #be185d;
+}
+
+html.pink-theme a {
+    color: #db2777;
+}
+
+html.pink-theme .btn-primary {
+    background: #ec4899;
+}
+
+html.pink-theme .btn-primary:hover {
+    background: #db2777;
+}
+
+html.pink-theme .suggestion-item:hover {
+    background: rgba(236, 72, 153, 0.12);
+}
+
+html.pink-theme .suggestion-name {
+    color: #6b2f45;
+}
+
+html.pink-theme .menu-submenu {
+    background: #fff5f8;
+    color: #6b2f45;
+    border: 1px solid #fbcfe8;
+}
+
+html.pink-theme .menu-submenu .menu-link:hover,
+html.pink-theme .menu-submenu .menu-link:focus-visible {
+    background: #ffe4ef;
+}
+
+html.pink-theme .skeleton {
+    background: #ffe4ef;
+}
+
+html.pink-theme .skeleton::after {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+}
+
+/* =========================================================
+   Centre spinner — only the spinner box is visible, no
+   backdrop, no full-page cover. Navbar/footer/sky untouched.
+   ========================================================= */
+.loading-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.loading-overlay.is-hidden {
+    opacity: 0;
+}
+
+.loading-overlay.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-overlay-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 28px 36px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+html.pink-theme .loading-overlay-box {
+    background: #fff5f8;
+    box-shadow: 0 8px 30px rgba(244, 114, 182, 0.25);
+}
+
+.loading-spinner-large {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(37, 99, 235, 0.2);
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+html.pink-theme .loading-spinner-large {
+    border-color: rgba(236, 72, 153, 0.2);
+    border-top-color: #ec4899;
+}
+
+.loading-overlay-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+html.pink-theme .loading-overlay-text {
+    color: #9d3a63;
+}
+
+/* =========================================================
+   Settings menu: active theme/unit indicator (checkmark)
+   ========================================================= */
+.menu-link[data-theme-option].is-selected,
+.menu-link[data-unit-option].is-selected,
+.menu-link[data-layout-option].is-selected,
+.menu-link[data-card-size-option].is-selected,
+.menu-link[data-sort-option].is-selected,
+.menu-link[data-alerts-option].is-selected,
+.menu-link[data-alert-threshold-option].is-selected {
+    font-weight: 600;
+}
+
+.menu-link[data-theme-option].is-selected::after,
+.menu-link[data-unit-option].is-selected::after,
+.menu-link[data-layout-option].is-selected::after,
+.menu-link[data-card-size-option].is-selected::after,
+.menu-link[data-sort-option].is-selected::after,
+.menu-link[data-alerts-option].is-selected::after,
+.menu-link[data-alert-threshold-option].is-selected::after {
+    content: '✓';
+    margin-left: auto;
+    padding-left: 10px;
+}
